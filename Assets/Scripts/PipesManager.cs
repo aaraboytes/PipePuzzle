@@ -15,6 +15,7 @@ public class PipesManager : MonoBehaviour
     public List<GameObject> pipes = new List<GameObject>();
     public int pipesLimit;
     int currentPipes;
+    public Pipe startPipe;
 
     [Header("Grid")]
     public GameObject cell;
@@ -61,9 +62,12 @@ public class PipesManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit2D hit2D = Physics2D.Raycast(mousePos, Vector3.zero);
-            if (hit2D.collider && hit2D.collider.CompareTag("Pipe"))
+            if (hit2D.collider)
             {
-                currentHold = hit2D.collider.gameObject;
+                if (hit2D.collider.CompareTag("Pipe"))
+                    currentHold = hit2D.collider.gameObject;
+                else if (hit2D.collider.CompareTag("Jump"))
+                    hit2D.collider.GetComponent<Jump>().ChangeState();
             }
         }
         #endregion
@@ -201,7 +205,7 @@ public class PipesManager : MonoBehaviour
         }
         return newPos;
     }
-    public void StartGame(Pipe startPipe)
+    public void StartGame()
     {
         timer = 0;
         foreach(GameObject pipe in pipes)

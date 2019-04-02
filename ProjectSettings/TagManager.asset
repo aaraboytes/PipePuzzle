@@ -7,6 +7,7 @@ TagManager:
   - Ball
   - End
   - Pipe
+  - Jump
   layers:
   - Default
   - TransparentFX
