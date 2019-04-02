@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 2442876873011081334}
   m_Layer: 0
   m_Name: PipeVer
-  m_TagString: Untagged
+  m_TagString: Pipe
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -209,6 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f27d8020109cd4cb3be08a4fb9c7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  antiremoveable: 0
   successColor: {r: 0.09531862, g: 0.9622642, b: 0.9622642, a: 1}
   failureColor: {r: 0.9245283, g: 0.6523868, b: 0.3532396, a: 1}
   entrances: 0200000003000000

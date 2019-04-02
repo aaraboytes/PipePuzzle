@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class PipesManager : MonoBehaviour
@@ -10,13 +11,16 @@ public class PipesManager : MonoBehaviour
     {
         Instance = this;
     }
+    [Header("Level")]
+    public List<GameObject> pipes = new List<GameObject>();
+    public int pipesLimit;
+    int currentPipes;
+
     [Header("Grid")]
     public GameObject cell;
     public int rows, columns;
     public int cellSize;
     int totalCells;
-    int currentPipes;
-    public List<GameObject> pipes = new List<GameObject>();
     public Vector2 xLimit;
     public Vector2 yLimit;
     GameObject currentHold = null;
@@ -29,6 +33,7 @@ public class PipesManager : MonoBehaviour
 
     [Header("UI")]
     public GameObject successPanel;
+    public Text dispPipes;
 
     private void Start()
     {
@@ -47,6 +52,7 @@ public class PipesManager : MonoBehaviour
         }
         ball.SetActive(false);
         successPanel.SetActive(false);
+        dispPipes.text = pipesLimit.ToString();
     }
     void Update()
     {
@@ -55,7 +61,7 @@ public class PipesManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit2D hit2D = Physics2D.Raycast(mousePos, Vector3.zero);
-            if (hit2D.collider)
+            if (hit2D.collider && hit2D.collider.CompareTag("Pipe"))
             {
                 currentHold = hit2D.collider.gameObject;
             }
@@ -66,13 +72,14 @@ public class PipesManager : MonoBehaviour
         {
             Debug.Log("Removing obj");
             RaycastHit2D hit2D = Physics2D.Raycast(mousePos, Vector3.zero);
-            if (hit2D.collider)
+            if (hit2D.collider && hit2D.collider.CompareTag("Pipe"))
             {
                 GameObject removeablePipe = hit2D.collider.gameObject;
                 if (!removeablePipe.GetComponent<Pipe>().antiremoveable)
                 {
                     pipes.Remove(removeablePipe);
                     currentPipes--;
+                    dispPipes.text = (pipesLimit - currentPipes).ToString();
                     Destroy(removeablePipe);
                 }
             }
@@ -136,7 +143,7 @@ public class PipesManager : MonoBehaviour
     }
     public void GeneratePipe(GameObject pipe)
     {
-        if (currentPipes < totalCells && !ball.activeInHierarchy)
+        if (currentPipes < pipesLimit && !ball.activeInHierarchy)
         {
             Vector3 newPos = Vector3.zero;
 
@@ -163,6 +170,7 @@ public class PipesManager : MonoBehaviour
 
             GameObject currentPipe = Instantiate(pipe, newPos, pipe.transform.rotation);
             currentPipes++;
+            dispPipes.text = (pipesLimit - currentPipes).ToString();
             pipes.Add(currentPipe);
         }
     }
