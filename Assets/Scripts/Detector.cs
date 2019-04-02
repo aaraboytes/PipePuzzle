@@ -57,22 +57,22 @@ public class Detector : MonoBehaviour
                 break;
         }
         GameObject ball = null;
+        ball = PipesManager.Instance.ball;
+        ball.transform.position = transform.position;
+        ball.SetActive(true);
+        
         switch (directionToShootRay)
         {
             case Pipe.Entrances.Right:
-                ball = Instantiate(PipesManager.Instance.ball, transform.position, Quaternion.identity);
                 ball.GetComponent<Rigidbody2D>().AddForce(Vector2.right * PipesManager.Instance.ballForce);
                 break;
             case Pipe.Entrances.Left:
-                ball = Instantiate(PipesManager.Instance.ball, transform.position, Quaternion.identity);
                 ball.GetComponent<Rigidbody2D>().AddForce(Vector2.left * PipesManager.Instance.ballForce);
                 break;
             case Pipe.Entrances.Top:
-                ball = Instantiate(PipesManager.Instance.ball, transform.position, Quaternion.identity);
                 ball.GetComponent<Rigidbody2D>().AddForce(Vector2.up * PipesManager.Instance.ballForce);
                 break;
             case Pipe.Entrances.Bottom:
-                ball = Instantiate(PipesManager.Instance.ball, transform.position, Quaternion.identity);
                 ball.GetComponent<Rigidbody2D>().AddForce(Vector2.down * PipesManager.Instance.ballForce);
                 break;
         }

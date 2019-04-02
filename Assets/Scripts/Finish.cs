@@ -10,7 +10,7 @@ public class Finish : MonoBehaviour
         if (collision.CompareTag("Ball"))
         {
             Instantiate(confettiParticle, transform.position, confettiParticle.transform.rotation);
-            Debug.Log("GAME OVER!");
+            PipesManager.Instance.successPanel.SetActive(true);
         }
     }
 }

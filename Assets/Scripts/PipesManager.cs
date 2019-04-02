@@ -16,17 +16,24 @@ public class PipesManager : MonoBehaviour
     public int cellSize;
     int totalCells;
     int currentPipes;
-    List<GameObject> pipes = new List<GameObject>();
+    public List<GameObject> pipes = new List<GameObject>();
     public Vector2 xLimit;
     public Vector2 yLimit;
+    GameObject currentHold = null;
+
     [Header("Ball")]
     public GameObject ball;
     public float ballForce;
-    GameObject currentHold = null;
+    public float ballTimer;
+    float timer = 0;
+
+    [Header("UI")]
+    public GameObject successPanel;
 
     private void Start()
     {
-        totalCells = rows * columns;
+        totalCells = rows * columns - pipes.Count;
+        GameObject grid = new GameObject("Grid");
         for(int i = 0; i < rows; i++)
         {
             for(int j = 0; j < columns; j++)
@@ -34,9 +41,12 @@ public class PipesManager : MonoBehaviour
                 Vector2 newPos;
                 newPos.x = xLimit[0] + j * cellSize;
                 newPos.y = yLimit[1] + i * -cellSize;
-                Instantiate(cell, newPos, Quaternion.identity);
+                GameObject currentCell = Instantiate(cell, newPos, Quaternion.identity);
+                currentCell.transform.parent = grid.transform;
             }
         }
+        ball.SetActive(false);
+        successPanel.SetActive(false);
     }
     void Update()
     {
@@ -71,7 +81,7 @@ public class PipesManager : MonoBehaviour
             currentHold = null;
         #endregion
         #region Reposition current hold obj
-        if (currentHold != null)
+        if (currentHold != null && !ball.activeInHierarchy)
         {
             //Store current pipe positions
             float storedX = currentHold.transform.position.x;
@@ -94,16 +104,67 @@ public class PipesManager : MonoBehaviour
             currentHold.transform.position = mousePos;
         }
         #endregion
+
+        #region Reactivate reposition
+        if (ball.activeInHierarchy)
+        {
+            Rigidbody2D ballBody = ball.GetComponent<Rigidbody2D>();
+            float absVel = Mathf.Abs(ballBody.velocity.x) + Mathf.Abs(ballBody.velocity.y);
+            if (absVel < 0.1f)
+                timer += Time.deltaTime;
+            if (timer > ballTimer)
+            {
+                HideBall();
+            }
+        }
+        #endregion
+
         #region Reset scene
         if (Input.GetKeyDown(KeyCode.R))
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
+    public void HideBall()
+    {
+        timer = 0;
+        ball.SetActive(false);
+        foreach (GameObject pipe in pipes)
+        {
+            if (pipe.GetComponent<Pipe>())
+                pipe.GetComponent<Pipe>().Reset();
+        }
+    }
     public void GeneratePipe(GameObject pipe)
     {
-        GameObject currentPipe = Instantiate(pipe, Vector3.zero, pipe.transform.rotation);
-        currentPipes++;
-        pipes.Add(currentPipe);
+        if (currentPipes < totalCells && !ball.activeInHierarchy)
+        {
+            Vector3 newPos = Vector3.zero;
+
+            //Check overlap
+            RaycastHit2D hit2D = Physics2D.Raycast(newPos, Vector3.zero);
+            if (hit2D.collider)
+            {
+                for(int i = 0; i < rows; i++)
+                {
+                    for(int j = 0; j < columns; j++)
+                    {
+                        Vector2 suposedNewPos;
+                        suposedNewPos.x = j * cellSize + xLimit[0];
+                        suposedNewPos.y = i * cellSize + yLimit[0];
+                        hit2D = Physics2D.Raycast(suposedNewPos, Vector3.zero);
+                        if (!hit2D.collider)
+                        {
+                            newPos = suposedNewPos;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            GameObject currentPipe = Instantiate(pipe, newPos, pipe.transform.rotation);
+            currentPipes++;
+            pipes.Add(currentPipe);
+        }
     }
     public Vector2 FindPos(Vector2 pos)
     {
@@ -134,9 +195,11 @@ public class PipesManager : MonoBehaviour
     }
     public void StartGame(Pipe startPipe)
     {
+        timer = 0;
         foreach(GameObject pipe in pipes)
         {
-            pipe.GetComponent<Pipe>().Reset();
+            if(pipe.GetComponent<Pipe>())
+                pipe.GetComponent<Pipe>().Reset();
         }
         startPipe.Travel();
     }
