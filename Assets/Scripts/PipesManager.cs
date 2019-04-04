@@ -52,10 +52,8 @@ public class PipesManager : MonoBehaviour
             }
         }
         ball.SetActive(false);
-        successPanel = PauseMenu.Instance.GetSuccesfullPanel();
         successPanel.SetActive(false);
         dispPipes.text = pipesLimit.ToString();
-       
     }
     void Update()
     {
