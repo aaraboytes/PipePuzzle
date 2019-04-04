@@ -8,6 +8,5 @@ public class Escena : MonoBehaviour
   public void cambiardeescena(string nombredeescena)
     {
         SceneManager.LoadScene(nombredeescena);
-
     }
 }
