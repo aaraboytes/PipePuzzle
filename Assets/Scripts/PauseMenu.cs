@@ -5,10 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
+    public static PauseMenu Instance;
+    private void Awake()
+    {
+        Instance = this;
+    }
     public GameObject pauseMenuUI;
 
     public static bool GameIsPaused = false;
-
+    public GameObject successfullPanel;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -48,5 +53,8 @@ public class PauseMenu : MonoBehaviour
     {
         Debug.Log("Quitting Game...");
     }
-
+    public GameObject GetSuccesfullPanel()
+    {
+        return successfullPanel;
+    }
 }
